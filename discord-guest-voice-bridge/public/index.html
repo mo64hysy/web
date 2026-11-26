@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#5865f2">
+  <title>Discord VC ゲスト参加</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="brand">
+      <div class="brand-mark">VC</div>
+      <div>
+        <h1>Discord VC ゲスト参加</h1>
+        <p>Discordアカウントなしで音声通話に参加できます</p>
+      </div>
+    </header>
+
+    <section id="join-panel" class="panel">
+      <h2>通話に参加</h2>
+      <form id="join-form">
+        <label for="guest-name">ニックネーム</label>
+        <input id="guest-name" name="name" maxlength="20" autocomplete="nickname" placeholder="Cさん" required>
+        <label for="guest-code">参加コード</label>
+        <input id="guest-code" name="code" maxlength="9" autocomplete="one-time-code" placeholder="ABCD-1234" required>
+        <button id="join-button" type="submit">参加する</button>
+      </form>
+      <p id="join-error" class="error" role="alert"></p>
+      <p class="notice">参加すると、あなたの音声はDiscord VCに接続しているBotを経由します。マイクの使用を許可してください。</p>
+    </section>
+
+    <section id="room-panel" class="panel" hidden>
+      <div class="room-heading">
+        <div>
+          <p class="eyebrow">接続中</p>
+          <h2 id="channel-name">ボイスチャンネル</h2>
+        </div>
+        <span id="connection-state" class="state">接続中</span>
+      </div>
+      <div class="controls">
+        <button id="mic-button" class="secondary" type="button">マイクをミュート</button>
+        <button id="leave-button" class="danger" type="button">退出する</button>
+      </div>
+      <label class="volume-label" for="volume">スピーカー音量 <span id="volume-value">100%</span></label>
+      <input id="volume" type="range" min="0" max="150" value="100">
+      <h3>参加者 <span id="participant-count">0</span></h3>
+      <ul id="participants" class="participants"></ul>
+      <p class="notice">音声は中継サーバーで処理されます。Discord側ではゲスト全員の音声がBotの音声として聞こえます。</p>
+    </section>
+
+    <footer>音声ブリッジ • ゲスト参加</footer>
+  </main>
+</body>
+</html>
