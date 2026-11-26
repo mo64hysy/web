@@ -91,6 +91,11 @@ function broadcastAudio(room, pcm, except = null) {
 }
 function closeRoom(room, reason = '管理者が接続を終了しました') {
   clearInterval(room.mixTimer);
+  if (rooms.get(room.guildId) === room) rooms.delete(room.guildId);
+  for (const decoder of room.decoders.values()) {
+    try { decoder.destroy(); } catch {}
+  }
+  room.decoders.clear();
   for (const ws of room.clients) {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'closed', reason }));
@@ -101,7 +106,6 @@ function closeRoom(room, reason = '管理者が接続を終了しました') {
   try { room.encoder.end(); } catch {}
   try { room.player.stop(true); } catch {}
   try { room.connection.destroy(); } catch {}
-  if (rooms.get(room.guildId) === room) rooms.delete(room.guildId);
 }
 async function ensureRoom(guild, channel) {
   const existing = rooms.get(guild.id);
@@ -176,8 +180,10 @@ async function ensureRoom(guild, channel) {
   }, 20);
 
   connection.on('error', error => console.error('[voice connection]', error));
-  connection.on(VoiceConnectionStatus.Destroyed, () => {
-    if (rooms.get(guild.id) === room) closeRoom(room, 'Discord VCとの接続が終了しました');
+  connection.on('stateChange', (_oldState, newState) => {
+    if (newState.status === VoiceConnectionStatus.Destroyed && rooms.get(guild.id) === room) {
+      closeRoom(room, 'Discord VCとの接続が終了しました');
+    }
   });
   return room;
 }
